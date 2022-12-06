@@ -1,0 +1,55 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Twotter | Home</title>
+    <style>
+      html, body { min-width: 100vw; min-height: 100vh; overflow-x: hidden;
+      margin: 0; padding: 0; border: 0; }
+    </style>
+  </head>
+
+  <body>
+    <script type="module" src="https://cdn.skypack.dev/twind/shim"></script>
+    
+    <!-- TODO: Reloading latest posts in real time (@fastify/websocket), error messages (@fastify/flash), use PostgreSQL with fastify?, limit number of characters, logo, favicon, better buttons (size), staticalize CSS classes generation (use tailwindcss/windicss server-side) -->
+    <nav class="bg-blue-400 flex justify-between pl-8 pr-8 py-3 items-center">
+      <a href="/" class="font-bold text-xl text-white">Twotter</a>
+
+      <div class="flex gap-4 items-center">
+        <a href="/login" class="rounded-full text-white px-6 py-2 cursor-pointer hover:bg-blue-300">Login</a>
+        <a href="/signup" class="rounded-full bg-white text-gray-700 px-6 py-2 cursor-pointer hover:text-blue-400">Signup</a>
+      </div>
+    </nav>
+    <main>
+      <header class="relative h-screen flex items-center justify-center flex-col">
+        <h1 class="text-6xl lg:text-7xl font-black text-center px-12 pb-8 text-white">A modern friction-less social-network</h1>
+        <p class="text-white text-md md:text-lg lg:text-xl text-bold text-center">
+          Twitter tends to discriminate and makes tension between people.<br>
+          Twotter aims to make the world better by enabling people to freely collaborate without constraints.
+        </p>
+        <img class="absolute top-0 left-0 w-full -z-10 h-full" src="https://www.planguru.com/wp-content/uploads/2015/12/header-graph.jpg">
+        
+        <div class="flex gap-4 items-center mt-12">
+          <a href="/signup" class="rounded-full bg-blue-400 text-white px-8 py-4 cursor-pointer hover:bg-blue-300">Signup</a>
+          <a href="/login" class="rounded-full bg-white text-gray-700 px-6 py-2 cursor-pointer hover:text-blue-400">Login</a>
+        </div>
+        
+        <div class="bg-white rounded-full w-10 h-10 mt-16 text-3xl text-gray-700 animate-bounce flex items-center justify-center absolute bottom-16">↓</div>
+      </header>
+      <article class="p-8">
+        <h3 class="text-3xl font-extrabold text-center mb-8">Latest posts</h3>
+        <ul class="flex flex-col gap-4">
+        {{#each latestPosts}}
+        <li class="bg-gray-100 px-8 py-4 rounded-xl">
+          <h5 class="italic">{{ this.user }} said:</h5>
+          <p>{{ this.content }}</p>
+        </li>
+        {{/each}}
+        </ul>
+      </article>
+    </main>
+  </body>
+
+</html>
