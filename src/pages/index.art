@@ -1,0 +1,46 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Twotter | Home</title>
+    <style>
+      html, body { min-width: 100vw; min-height: 100vh; overflow-x: hidden;
+      margin: 0; padding: 0; border: 0; }
+    </style>
+    <!-- STYLES -->
+  </head>
+  <body>
+    <!-- TODO: Reloading latest posts in real time (@fastify/websocket), error messages (@fastify/flash), use PostgreSQL with fastify?, limit number of characters in posts, logo, favicon -->
+    <main>
+      <section class="relative h-screen no-repeat bg-cover after:content-DEFAULT after:w-full after:h-full after:absolute after:top-0 after:left-0 after:bg-[rgba(0,0,0,0.6)]" style="background-image: url('/hero-image.jpg'); background-position: 50% 0;">
+        <% include("../components/nav.art", { variant: 1, isLoggedIn, user }) %>
+
+        <div class="h-full flex items-center justify-center flex-col relative z-1 p-12">
+          <h1 class="text-5xl md:text-6xl lg:text-7xl font-black text-center mb-8 text-white">A modern friction-less social-network</h1>
+          <p class="text-white text-lg lg:text-xl text-center max-w-250">
+            Finally a social-network which respects their users and aims to build a better world by enabling people to freely collaborate without constraints. Give the floor back to humans!
+          </p>
+
+          <div class="flex gap-4 items-center mt-12">
+            <a href="/signup" class="rounded-tr-3xl rounded-bl-3xl bg-yellow-300 text-zinc-700 px-7 py-3 cursor-pointer focus:outline-none focus:bg-yellow-200 hover:bg-yellow-200">Signup</a>
+            <a href="/login" class="rounded-tl-3xl rounded-br-3xl bg-white text-zinc-700 px-7 py-3 cursor-pointer focus:outline-none focus:text-yellow-500 hover:text-yellow-500">Login</a>
+          </div>
+        </div>
+      </section>
+      
+      <section class="p-8 flex flex-col items-center">
+        <h3 class="text-3xl font-extrabold text-center mb-8">Latest posts</h3>
+        <ul class="flex flex-col items-stretch gap-4 w-full md:w-1/2 lg:w-1/3">
+        {{each latestPosts}}
+        <li class="rounded-tr-3xl rounded-bl-3xl bg-gray-100 px-8 py-4">
+          <h5 class="italic">{{ $value.user }} said:</h5>
+          <p>{{ $value.content }}</p>
+        </li>
+        {{/each}}
+        </ul>
+      </section>
+    </main>
+  </body>
+
+</html>

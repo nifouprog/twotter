@@ -1,0 +1,28 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Twotter | Signup</title>
+    <style>
+      html, body { min-width: 100vw; min-height: 100vh; overflow-x: hidden;
+      margin: 0; padding: 0; border: 0; }
+    </style>
+    <!-- STYLES -->
+  </head>
+  <body class="flex flex-col bg-gradient-to-br from-yellow-200 to-yellow-300">
+    <% include("../components/nav.art", { variant: 2, isLoggedIn, user }) %>
+    
+    <!-- TODO: Validate user name (not existing user with the same name) as we type, same navigation bar than everywhere? -->
+    <div class="w-full h-full flex items-center justify-center flex-1">
+      <form class="flex flex-col bg-white px-20 pb-10 pt-10 rounded-xl text-gray-700" method="POST">
+        <h3 class="mb-10 text-center font-bold text-xl">Sign up to Twotter</h3>
+        <label for="name-input" class="mb-2 uppercase text-xs font-bold tracking-[.2em]">Name</label>
+        <input id="name-input" class="mb-8 border-b-2 focus:border-b-yellow-300 focus:outline-none" type="text" name="name" placeholder="Enter a name" />
+        <label for="password-input" class="mb-2 uppercase text-xs font-bold tracking-[.2em]">Password</label>
+        <input id="password-input" class="mb-10 border-b-2 focus:border-b-yellow-300 focus:outline-none" type="password" name="password" placeholder="Enter a password" />
+        <button type="submit" class="bg-yellow-300 rounded-full py-2 text-zinc-700 hover:bg-yellow-200 focus:outline-none focus:bg-yellow-200">Sign up!</button>
+      </form>
+    </div>
+  </body>
+</html>

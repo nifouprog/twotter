@@ -1,0 +1,19 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Twotter | User not found</title>
+    <style>
+      html, body { min-width: 100vw; min-height: 100vh; overflow-x: hidden;
+      margin: 0; padding: 0; border: 0; }
+    </style>
+    <!-- STYLES -->
+  </head>
+  <body>
+    <% include("../components/nav.art", { variant: 3, isLoggedIn, user }) %>
+    
+    <h3 class="text-center mt-12 text-xl font-black">User "{{ user }}" not found!</h3>
+    <p class="text-center mt-4">Maybe try to <a href="/" class="text-yellow-500">go home</a>.</p>
+  </body>
+</html>

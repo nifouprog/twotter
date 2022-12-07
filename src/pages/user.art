@@ -1,0 +1,37 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Twotter | {{ user }}</title>
+    <style>
+      html, body { min-width: 100vw; min-height: 100vh; overflow-x: hidden;
+      margin: 0; padding: 0; border: 0; }
+    </style>
+    <!-- STYLES -->
+  </head>
+  <body>
+    <% include("../components/nav.art", { variant: 3, isLoggedIn, user }) %>
+    
+    <main class="p-8 flex flex-col items-center gap-8">
+      <h3 class="font-bold text-lg">{{ user }}'s posts:</h3>
+      <ul class="flex flex-col gap-4 w-full md:w-1/2 lg:w-1/3">
+        {{each posts}}
+        <li class="rounded-tr-3xl rounded-bl-3xl bg-gray-100 px-8 py-4">
+          <h5 class="italic">{{ $value.user }} said:</h5>
+          <p>{{ $value.content }}</p>
+        </li>
+        {{/each}}
+
+        {{if isLoggedIn}}
+        <li class="w-full">
+          <form class="flex flex-col gap-4" method="POST">
+            <textarea class="rounded-tr-3xl rounded-bl-3xl border-2 p-4 focus:border-yellow-300 focus:outline-none" name="content" placeholder="What are you thinking about?"></textarea>
+            <button class="rounded-tr-3xl rounded-bl-3xl bg-yellow-300 text-zinc-700 py-2 focus:outline-none hover:bg-yellow-200 focus:bg-yellow-200" type="submit">Toot!</button>
+          </form>
+        </li>
+        {{/if}}
+      </ul>
+    </main>
+  </body>
+</html>

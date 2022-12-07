@@ -7,10 +7,7 @@ const fastify = require("fastify")({
 
 // Session handling with cookies, signing, ...
 fastify.register(require("@fastify/secure-session"), {
-  key: fs.readFileSync(path.join(__dirname, "secret-key")),
-  cookie: {
-    maxAge: new Date(100000), // TODO: Remove me
-  }
+  key: fs.readFileSync(path.join(__dirname, "../secret-key")),
 });
 
 // Static files
@@ -22,26 +19,58 @@ fastify.register(require("@fastify/static"), {
 fastify.register(require("@fastify/formbody"));
 
 // Templating
+const minifier = require("html-minifier")
+const minifierOpts = {
+  removeComments: true,
+  removeCommentsFromCDATA: true,
+  collapseWhitespace: true,
+  collapseBooleanAttributes: true,
+  removeAttributeQuotes: true,
+  removeEmptyAttributes: true
+};
+
 fastify.register(require("@fastify/view"), {
   engine: {
-    handlebars: require("handlebars"),
+    "art-template": require("art-template"),
+  },
+  options: {
+    useHtmlMinifier: minifier,
+    htmlMinifierOptions: minifierOpts,
   },
 });
 
-// Register the routes
-const db = require("./src/database.js");
+// Auto-utility-classes styling
+fastify.addHook("onSend", async (request, reply, payload) => {
+  const err = null;
+  
+  if (typeof payload === "string" && payload.includes("<!-- STYLES -->")) {
+    console.log(payload)
+    payload = payload.replace("<!-- STYLES -->", "<style>" + await styles.generateStyles(payload) + "</style>");
+  }
+  
+  return payload;
+})
 
-// TODO: Set and check cookies after login and signup + show form to add a new post in user.hbs
+// Register the routes
+const db = require("./database.js");
+const styles = require("./styles.js");
+
 fastify.get("/", async (req, reply) => {
-  return reply.view("/src/pages/index.hbs", { latestPosts: await db.getLatestPosts() });
+  const login = req.session.login;
+  const isLoggedIn = login && await db.checkPassword(login.name, login.password);
+  return reply.view("/src/pages/index.art", { user: login && login.name, isLoggedIn, latestPosts: await db.getLatestPosts() });
 });
 
 fastify.get("/signup", async (req, reply) => {
-  return reply.view("/src/pages/signup.hbs");
+  const login = req.session.login;
+  const isLoggedIn = login && await db.checkPassword(login.name, login.password);
+  return reply.view("/src/pages/signup.art", { user: login && login.name, isLoggedIn });
 });
 
 fastify.get("/login", async (req, reply) => {
-  return reply.view("/src/pages/login.hbs");
+  const login = req.session.login;
+  const isLoggedIn = login && await db.checkPassword(login.name, login.password);
+  return reply.view("/src/pages/login.art", { user: login && login.name, isLoggedIn });
 });
 
 fastify.get("/logout", async (req, reply) => {
@@ -58,11 +87,12 @@ fastify.get("/user/:user", async (req, reply) => {
     const login = req.session.login;
     const isLoggedIn = login && await db.checkPassword(login.name, login.password);
     
-    return reply.view("/src/pages/user.hbs", { user, posts, isLoggedIn });
+    return reply.view("/src/pages/user.art", { user, posts, isLoggedIn });
   } else {
-    return reply.view("/src/pages/user-not-found.hbs", { user });
+    return reply.view("/src/pages/user-not-found.art", { user, isLoggedIn: false });
   }
 });
+
 
 fastify.post("/signup", async (req, reply) => {
   const { name, password } = req.body;
@@ -94,11 +124,14 @@ fastify.post("/user/:user", async (req, reply) => {
   const login = req.session.login;  
   
   if (login && await db.checkPassword(login.name, login.password)) {
-    await db.insertPost(login.name, req.body.content);
+    if (req.body.content.length > 0) {
+      await db.insertPost(login.name, req.body.content);
+    } // TODO: Error message otherwise: post content is empty
+    
     return reply.redirect(`/user/${login.name}`);
   } else {
     // TODO: Error message: not allowed to post
-    return reply.view("/src/pages/login.hbs");
+    return reply.view("/src/pages/login.art");
   }
 });
 
