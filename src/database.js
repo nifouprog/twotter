@@ -31,7 +31,7 @@ dbWrapper
 
         // TODO: Date when the post was created
         await db.run(
-          "CREATE TABLE Posts (id INTEGER PRIMARY KEY AUTOINCREMENT, user TEXT, content TEXT)"
+          "CREATE TABLE Posts (id INTEGER PRIMARY KEY AUTOINCREMENT, user TEXT, content TEXT, likes TEXT)"
         );
       } else {
         console.log(await db.all("SELECT * from Users"));
@@ -85,7 +85,28 @@ module.exports = {
   
   insertPost: async (user, content) => {
     try {
-      await db.run("INSERT INTO Posts (user, content) VALUES (?, ?)", user, content);
+      await db.run("INSERT INTO Posts (user, content, likes) VALUES (?, ?, '')", user, content);
+    } catch (dbError) {
+      console.error(dbError);
+    }
+  },
+  
+  getLikes: async (postId) => {
+    try {
+      return (await db.all("SELECT * from Posts WHERE ID = ?", postId))[0].likes.split(",");
+    } catch (dbError) {
+      console.error(dbError);
+    }
+  },
+  
+  incrementLikes: async (postId, user) => {
+    try {
+      // TODO: This is ugly: users who like it get appended to a string, use at least the user ID + validation of appending by checking that there were no likes before
+      if ((await db.all("SELECT * FROM posts WHERE ID = ?", postId))[0].likes.length === 0) { 
+        await db.run("UPDATE Posts SET likes = ? WHERE ID = ?", user, postId);
+      } else {
+        await db.run("UPDATE Posts SET likes = likes || ',' || ? WHERE ID = ?", user, postId);
+      }
     } catch (dbError) {
       console.error(dbError);
     }

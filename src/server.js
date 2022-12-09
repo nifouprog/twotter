@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require("path");
 
 const fastify = require("fastify")({
-  logger: false,
+  logger: true,
 });
 
 // Session handling with cookies, signing, ...
@@ -44,7 +44,6 @@ fastify.addHook("onSend", async (request, reply, payload) => {
   const err = null;
   
   if (typeof payload === "string" && payload.includes("<!-- STYLES -->")) {
-    console.log(payload)
     payload = payload.replace("<!-- STYLES -->", "<style>" + await styles.generateStyles(payload) + "</style>");
   }
   
@@ -87,7 +86,7 @@ fastify.get("/user/:user", async (req, reply) => {
     const login = req.session.login;
     const isLoggedIn = login && await db.checkPassword(login.name, login.password);
     
-    return reply.view("/src/pages/user.art", { user, posts, isLoggedIn });
+    return reply.view("/src/pages/user.art", { user, currentUser: login && login.name, posts, isLoggedIn });
   } else {
     return reply.view("/src/pages/user-not-found.art", { user, isLoggedIn: false });
   }
@@ -120,8 +119,25 @@ fastify.post("/login", async (req, reply) => {
   }
 });
 
+fastify.post("/like/:postId", async (req, reply) => {
+  const login = req.session.login;
+  
+  if (login && await db.checkPassword(login.name, login.password)) {
+    if ((await db.getLikes(req.params.postId)).includes(login.name)) {
+      // Already liked
+      return reply.redirect(req.query.redirect);
+    } else {
+      await db.incrementLikes(req.params.postId, login.name);
+      return reply.redirect(req.query.redirect);
+    }
+  } else {
+    // TODO: Error message: you need to connect to like a twoot
+    return reply.redirect("/login");
+  }
+});
+
 fastify.post("/user/:user", async (req, reply) => {
-  const login = req.session.login;  
+  const login = req.session.login;
   
   if (login && await db.checkPassword(login.name, login.password)) {
     if (req.body.content.length > 0) {
