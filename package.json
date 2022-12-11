@@ -15,7 +15,7 @@
     "@unocss/preset-uno": "^0.47.5",
     "art-template": "^4.13.2",
     "bcryptjs": "^2.4.3",
-    "fastify": "^4.9.2",
+    "fastify": "^4.10.2",
     "html-minifier": "^4.0.0",
     "sqlite": "^4.1.2",
     "sqlite3": "^5.1.2"
