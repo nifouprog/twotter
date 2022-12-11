@@ -1,0 +1,22 @@
+<li class="rounded-tr-3xl rounded-bl-3xl bg-gray-100 px-8 py-4 text-zinc-700">
+  <div class="flex justify-between items-center">
+    <a href="/user/{{ post.user }}" class="italic font-bold text-md cursor-pointer">
+      {{ post.user }}
+    </a>
+    
+    <div class="flex">
+      <span class="font-bold"><%= (i = post.likes.split(","), i[0] === "" ? 0 : i.length) %></span>
+      <form class="post-like flex flex-col gap-4" data-id="{{ post.id }}" method="POST" action="/like/{{ post.id }}?redirect={{ redirect(post.user) }}">
+        <button type="submit" class="flex ml-2" <% if (post.likes.split(",").includes(user) || user === undefined) { %> disabled <% } %>>
+          <svg class="text-yellow-300" width="28" height="28" viewBox="0 0 24 24"><path <% if (post.likes.split(",").includes(user)) { %> stroke="currentColor" fill="currentColor" <% } else { %> stroke="currentColor" fill="transparent" <% } %> stroke-width="2" d="M12.001 4.529a5.998 5.998 0 0 1 8.242.228a6 6 0 0 1 .236 8.236l-8.48 8.492l-8.478-8.492a6 6 0 0 1 8.48-8.464z"/></svg>
+        </button>
+      </form>
+    </div>
+  </div>
+  
+  <p class="post-date mb-2 text-sm text-zinc-500">{{ post.date }}</p>
+  
+  <p class="whitespace-pre-wrap">{{ post.content }}</p>
+</li>
+
+<!-- reply?, button to delete the post if connected and the same user, button to unlike, like animation (CSS transition instead of setting the SVG value) -->

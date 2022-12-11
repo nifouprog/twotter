@@ -1,5 +1,6 @@
 .glitchdotcom.json
 .node-gyp
+.sqlite_history
 node_modules
 secret-key
 database.db

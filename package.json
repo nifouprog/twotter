@@ -7,17 +7,18 @@
     "start": "secure-session > secret-key && node src/server.js"
   },
   "dependencies": {
-    "fastify": "^4.9.2",
-    "sqlite": "^4.1.2",
-    "sqlite3": "^5.1.2",
-    "@fastify/view": "^7.3.0",
-    "@fastify/static": "^6.6.0",
     "@fastify/formbody": "^7.4.0",
     "@fastify/secure-session": "^5.3.0",
-    "bcryptjs": "^2.4.3",
-    "windicss": "^3.5.6",
+    "@fastify/static": "^6.6.0",
+    "@fastify/view": "^7.3.0",
+    "@unocss/core": "^0.47.5",
+    "@unocss/preset-uno": "^0.47.5",
     "art-template": "^4.13.2",
-    "html-minifier": "^4.0.0"
+    "bcryptjs": "^2.4.3",
+    "fastify": "^4.9.2",
+    "html-minifier": "^4.0.0",
+    "sqlite": "^4.1.2",
+    "sqlite3": "^5.1.2"
   },
   "engines": {
     "node": "14.x"

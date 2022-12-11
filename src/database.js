@@ -29,9 +29,8 @@ dbWrapper
           "CREATE TABLE Users (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, password TEXT)"
         );
 
-        // TODO: Date when the post was created
         await db.run(
-          "CREATE TABLE Posts (id INTEGER PRIMARY KEY AUTOINCREMENT, user TEXT, content TEXT, likes TEXT)"
+          "CREATE TABLE Posts (id INTEGER PRIMARY KEY AUTOINCREMENT, user TEXT, content TEXT, likes TEXT, date TEXT)"
         );
       } else {
         console.log(await db.all("SELECT * from Users"));
@@ -85,7 +84,7 @@ module.exports = {
   
   insertPost: async (user, content) => {
     try {
-      await db.run("INSERT INTO Posts (user, content, likes) VALUES (?, ?, '')", user, content);
+      await db.run("INSERT INTO Posts (user, content, likes, date) VALUES (?, ?, '', DATETIME('now'))", user, content);
     } catch (dbError) {
       console.error(dbError);
     }

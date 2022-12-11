@@ -1,0 +1,38 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Twotter | {{ user }}</title>
+    <style>
+      html, body { min-width: 100vw; min-height: 100vh; overflow-x: hidden;
+      margin: 0; padding: 0; border: 0; }
+    </style>
+    <!-- STYLES -->
+  </head>
+  <body>
+    <% include("../components/nav.html", { variant: 3, isLoggedIn, user }) %>
+    
+    <main class="p-8 flex flex-col items-center gap-8">
+      <h3 class="font-bold text-3xl text-zinc-700">{{ user }}</h3>
+      
+      <% if (isLoggedIn && user === currentUser) { %>
+      <div class="flex items-center justify-center mb-8 w-full md:w-1/2 lg:w-1/3">
+        <form class="w-full gap-4" method="POST">
+          <textarea id="post-content" class="w-full rounded-tr-3xl rounded-bl-3xl border-2 p-4 focus:border-yellow-300 focus:outline-none min-h-20 max-h-90" name="content" placeholder="What are you thinking about?" maxlength="350" autocomplete="off"></textarea>
+          <p class="w-full text-right text-sm mb-4 mt-1" id="remaining-characters">350 remaining characters</p>
+          <button class="w-full rounded-tr-3xl rounded-bl-3xl bg-yellow-300 text-zinc-700 py-2 focus:outline-none hover:bg-yellow-200 focus:bg-yellow-200" type="submit">Twoot!</button>
+        </form>
+      </div>
+      <% } %>
+
+      <% include("../components/posts.html", { posts: posts.reverse(), redirect: (user) => "/user/" + user, user: currentUser }) %>
+    </main>
+    <script>
+      const postContent = document.getElementById("post-content");
+      const remainingCharacters = document.getElementById("remaining-characters");
+      
+      postContent.addEventListener("input", (e) => remainingCharacters.innerText = 350 - postContent.value.length + (postContent.value.length === 349 ? " remaining character" : " remaining characters"));
+    </scripts>
+  </body>
+</html>
