@@ -11,7 +11,7 @@
     <!-- STYLES -->
   </head>
   <body>
-    <!-- TODO: Reloading latest posts in real time (@fastify/websocket), error messages (@fastify/flash), dark theme, button to remove account, use PostgreSQL with fastify?, personal page to read news feed with liked users, logo, favicon -->
+    <!-- TODO: Reloading latest posts in real time (@fastify/websocket), dark theme, button to remove account, support several database provides (in a directory): postgresql, sqlite, deta base, media support (images, quizzes, videos, interactive presentations?), personal page to read news feed with liked users, logo, favicon -->
     <main class="w-full h-full">
       <section class="relative h-full no-repeat bg-cover bg-[url(/hero-image.jpg)] bg-[position:50%_0] after:content-empty after:w-full after:h-full after:absolute after:top-0 after:left-0 after:bg-[rgba(0,0,0,0.6)]">
         <% include("../components/nav.html", { variant: 1, isLoggedIn, user }) %>
@@ -35,5 +35,4 @@
       </section>
     </main>
   </body>
-
 </html>

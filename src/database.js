@@ -84,7 +84,7 @@ module.exports = {
   
   insertPost: async (user, content) => {
     try {
-      await db.run("INSERT INTO Posts (user, content, likes, date) VALUES (?, ?, '', DATETIME('now'))", user, content);
+      await db.run("INSERT INTO Posts (user, content, likes, date) VALUES (?, ?, '', ?)", user, content, (new Date()).toISOString());
     } catch (dbError) {
       console.error(dbError);
     }

@@ -15,20 +15,31 @@
     
     <!-- TODO: Validate user name (not existing user with the same name) as we type-->
     <div class="w-full h-full flex items-center justify-center flex-1">
-      <form class="flex flex-col bg-white px-20 py-10 rounded-xl text-gray-700" method="POST">
-        <h3 class="mb-10 text-center font-bold text-xl">Sign up to Twotter</h3>
-        <label for="name-input" class="mb-2 uppercase text-xs font-bold tracking-[.2em]">Name</label>
-        <input id="name-input" maxlength="30" class="mb-8 border-b-2 focus:border-b-yellow-300 focus:outline-none" type="text" name="name" placeholder="Enter a name" autocomplete="off" />
-        <label for="password-input" class="mb-2 uppercase text-xs font-bold tracking-[.2em]">Password</label>
-        <div class="relative">
-          <input id="password-input" maxlength="60" class="check-matching-password mb-4 border-b-2 focus:border-b-yellow-300 focus:outline-none" type="password" name="password" autocomplete="off" placeholder="Enter a password" />
-          <button id="clear-text-button" type="button" class="absolute top-0 right-0 text-gray-500 focus:text-gray-800 focus:outline-none">
-            <svg width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M12 9a3 3 0 0 0-3 3a3 3 0 0 0 3 3a3 3 0 0 0 3-3a3 3 0 0 0-3-3m0 8a5 5 0 0 1-5-5a5 5 0 0 1 5-5a5 5 0 0 1 5 5a5 5 0 0 1-5 5m0-12.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5Z"/></svg>
-            <svg class="hidden" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M11.83 9L15 12.16V12a3 3 0 0 0-3-3h-.17m-4.3.8l1.55 1.55c-.05.21-.08.42-.08.65a3 3 0 0 0 3 3c.22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53a5 5 0 0 1-5-5c0-.79.2-1.53.53-2.2M2 4.27l2.28 2.28l.45.45C3.08 8.3 1.78 10 1 12c1.73 4.39 6 7.5 11 7.5c1.55 0 3.03-.3 4.38-.84l.43.42L19.73 22L21 20.73L3.27 3M12 7a5 5 0 0 1 5 5c0 .64-.13 1.26-.36 1.82l2.93 2.93c1.5-1.25 2.7-2.89 3.43-4.75c-1.73-4.39-6-7.5-11-7.5c-1.4 0-2.74.25-4 .7l2.17 2.15C10.74 7.13 11.35 7 12 7Z"/></svg>
-          </button>
+      <form class="flex flex-col gap-10 bg-white px-10 md:px-20 py-10 rounded-xl text-gray-700" method="POST">
+        <h3 class="text-center font-bold text-xl">Sign up to Twotter</h3>
+        
+        <% if (error && error[0]) { %>
+        <% include("../components/error.html", { error: error[0] }) %>
+        <% } %>
+        
+        <div class="flex flex-col gap-2">
+          <label for="name-input" class="uppercase text-xs font-bold tracking-[.2em]">Name</label>
+          <input id="name-input" maxlength="30" class="border-b-2 focus:border-b-yellow-300 focus:outline-none" type="text" name="name" placeholder="Enter a name" autocomplete="off" autofocus />
         </div>
-        <input id="password-input-check" maxlength="60" class="check-matching-password mb-4 border-b-2 focus:border-b-yellow-300 focus:outline-none" type="password" autocomplete="off" placeholder="Retype your password" />
-        <p id="password-input-status" class="w-full text-red-500 [&.correct]:text-green-500 text-right text-sm mb-10">Password is empty</p>
+        
+        <div class='flex flex-col gap-2'>
+          <label for="password-input" class="uppercase text-xs font-bold tracking-[.2em]">Password</label>
+          <div class="relative">
+            <input id="password-input" maxlength="60" class="check-matching-password w-full border-b-2 focus:border-b-yellow-300 focus:outline-none" type="password" name="password" autocomplete="off" placeholder="Enter a password" />
+            <button id="clear-text-button" type="button" class="absolute top-0 right-0 text-gray-500 focus:text-gray-800 focus:outline-none">
+              <svg width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M12 9a3 3 0 0 0-3 3a3 3 0 0 0 3 3a3 3 0 0 0 3-3a3 3 0 0 0-3-3m0 8a5 5 0 0 1-5-5a5 5 0 0 1 5-5a5 5 0 0 1 5 5a5 5 0 0 1-5 5m0-12.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5Z"/></svg>
+              <svg class="hidden" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M11.83 9L15 12.16V12a3 3 0 0 0-3-3h-.17m-4.3.8l1.55 1.55c-.05.21-.08.42-.08.65a3 3 0 0 0 3 3c.22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53a5 5 0 0 1-5-5c0-.79.2-1.53.53-2.2M2 4.27l2.28 2.28l.45.45C3.08 8.3 1.78 10 1 12c1.73 4.39 6 7.5 11 7.5c1.55 0 3.03-.3 4.38-.84l.43.42L19.73 22L21 20.73L3.27 3M12 7a5 5 0 0 1 5 5c0 .64-.13 1.26-.36 1.82l2.93 2.93c1.5-1.25 2.7-2.89 3.43-4.75c-1.73-4.39-6-7.5-11-7.5c-1.4 0-2.74.25-4 .7l2.17 2.15C10.74 7.13 11.35 7 12 7Z"/></svg>
+            </button>
+          </div>
+          <input id="password-input-check" maxlength="60" class="check-matching-password border-b-2 focus:border-b-yellow-300 focus:outline-none" type="password" autocomplete="off" placeholder="Retype your password" />
+          <p id="password-input-status" class="w-full text-red-500 [&.correct]:text-green-500 text-right text-sm">Password is empty</p>
+        </div>
+        
         <button id="submit-button" type="submit" class="bg-yellow-100 cursor-default rounded-full py-2 text-zinc-700 not-disabled:bg-yellow-300 not-disabled:hover:bg-yellow-200 not-disabled:focus:outline-none not-disabled:focus:bg-yellow-200 not-disabled:cursor-pointer">Sign up!</button>
       </form>
     </div>

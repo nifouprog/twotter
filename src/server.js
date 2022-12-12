@@ -7,7 +7,11 @@ const fastify = require("fastify")({
 
 // Session handling with cookies, signing, ...
 fastify.register(require("@fastify/secure-session"), {
+  // TODO: Store using hexadecimal buffer?
   key: fs.readFileSync(path.join(__dirname, "../secret-key")),
+  cookie: {
+    path: "/",
+  },
 });
 
 // Static files
@@ -18,8 +22,11 @@ fastify.register(require("@fastify/static"), {
 // Form handling
 fastify.register(require("@fastify/formbody"));
 
+// Flash messages
+fastify.register(require("@fastify/flash"));
+
 // Templating
-const minifier = require("html-minifier")
+const minifier = require("html-minifier");
 const minifierOpts = {
   removeComments: true,
   removeCommentsFromCDATA: true,
@@ -41,8 +48,6 @@ fastify.register(require("@fastify/view"), {
 
 // Auto-utility-classes styling
 fastify.addHook("onSend", async (request, reply, payload) => {
-  const err = null;
-  
   if (typeof payload === "string" && payload.includes("<!-- STYLES -->")) {
     payload = payload.replace("<!-- STYLES -->", "<style>" + await styles.generateStyles(payload) + "</style>");
   }
@@ -63,13 +68,13 @@ fastify.get("/", async (req, reply) => {
 fastify.get("/signup", async (req, reply) => {
   const login = req.session.login;
   const isLoggedIn = login && await db.checkPassword(login.name, login.password);
-  return reply.view("/src/pages/signup.html", { user: login && login.name, isLoggedIn });
+  return reply.view("/src/pages/signup.html", { user: login && login.name, isLoggedIn, error: reply.flash("error") });
 });
 
 fastify.get("/login", async (req, reply) => {
   const login = req.session.login;
   const isLoggedIn = login && await db.checkPassword(login.name, login.password);
-  return reply.view("/src/pages/login.html", { user: login && login.name, isLoggedIn });
+  return reply.view("/src/pages/login.html", { user: login && login.name, isLoggedIn, error: reply.flash("error") });
 });
 
 fastify.get("/logout", async (req, reply) => {
@@ -86,7 +91,7 @@ fastify.get("/user/:user", async (req, reply) => {
     const login = req.session.login;
     const isLoggedIn = login && await db.checkPassword(login.name, login.password);
     
-    return reply.view("/src/pages/user.html", { user, currentUser: login && login.name, posts, isLoggedIn });
+    return reply.view("/src/pages/user.html", { user, currentUser: login && login.name, posts, isLoggedIn, error: reply.flash("error") });
   } else {
     return reply.view("/src/pages/user-not-found.html", { user, isLoggedIn: false });
   }
@@ -97,16 +102,19 @@ fastify.post("/signup", async (req, reply) => {
   const { name, password } = req.body;
   
   if (name.length > 30) {
-    // TODO: Error message: username too long (20 chars max)
+    req.flash("error", "Username too long (20 characters maximum)");
     return reply.redirect("/signup");
   } else if (password.length > 60) {
-    // TODO: Error message: password too long (50 chars max)
+    req.flash("error", "Password too long (50 characters maximum)");
     return reply.redirect("/signup");
   } else if (await db.userExists(name)) {
-    // TODO: Error message: user with the same name already exists
+    req.flash("error", "A user with the same name already exists");
     return reply.redirect("/signup");
-  } if (name.length === 0 || password.length === 0) {
-    // TODO: Error message: username or password must not be empty
+  } if (name.length === 0) {
+    req.flash("error", "Username must not be empty");
+    return reply.redirect("/signup");
+  } else if (password.length === 0) {
+    req.flash("error", "Password must not be empty");
     return reply.redirect("/signup");
   } else {
     await db.insertUser(name, password);
@@ -119,16 +127,16 @@ fastify.post("/login", async (req, reply) => {
   const { name, password } = req.body;
   
   if (name.length > 30) {
-    // TODO: Error message: username too long (50 chars max)
+    req.flash("error", "Username too long (20 characters maximum)");
     return reply.redirect("/login");
   } else if (password.length > 60) {
-    // TODO: Error message: password too long (75 chars max)
+    req.flash("error", "Password too long (50 characters maximum)");
     return reply.redirect("/login");
   } else if (await db.checkPassword(name, password)) {
     req.session.login = { name, password: password };
     return reply.redirect(`/user/${name}`);
   } else {
-    // TODO: Error message: bad username or password
+    req.flash("error", "Bad username or password");
     return reply.redirect("/login");
   }
 });
@@ -145,23 +153,25 @@ fastify.post("/like/:postId", async (req, reply) => {
       return req.query.redirect ? reply.redirect(req.query.redirect) : "";
     }
   } else {
-    // TODO: Error message: you need to connect to like a twoot
+    req.flash("error", "You need to log in to like a twoot");
     return reply.redirect("/login");
   }
 });
 
-fastify.post("/user/:user", async (req, reply) => {
+fastify.post("/post/:user", async (req, reply) => {
   const login = req.session.login;
   
   if (login && await db.checkPassword(login.name, login.password)) {
     if (req.body.content.trim().length > 0 && req.body.content.length <= 350) {
       await db.insertPost(login.name, req.body.content);
-    } // TODO: Error message otherwise: post content is empty
+    } else {
+      req.flash("error", "Post content must not be empty");
+    }
     
     return reply.redirect(`/user/${login.name}`);
   } else {
-    // TODO: Error message: not allowed to post
-    return reply.view("/src/pages/login.html");
+    req.flash("error", "You need to log in to twoot");
+    return reply.redirect("/login");
   }
 });
 
